@@ -4,7 +4,8 @@
 
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::Widget)
+    ui(new Ui::Widget),
+    client(new AsioClient)
 {
     ui->setupUi(this);
 
@@ -18,4 +19,11 @@ Widget::Widget(QWidget *parent) :
 Widget::~Widget()
 {
     delete ui;
+    delete client;
+}
+
+void Widget::on_getBtn_clicked()
+{
+    //ui->urlEdit->text();
+    client->Get("www.boost.org", "/");
 }

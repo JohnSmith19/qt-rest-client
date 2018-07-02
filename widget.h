@@ -2,6 +2,7 @@
 #define WIDGET_H
 
 #include <QWidget>
+#include <asioclient.h>
 
 namespace Ui {
 class Widget;
@@ -15,8 +16,12 @@ public:
     explicit Widget(QWidget *parent = 0);
     ~Widget();
 
+private slots:
+    void on_getBtn_clicked();
+
 private:
     Ui::Widget *ui;
+    AsioClient* client;
 };
 
 #endif // WIDGET_H
