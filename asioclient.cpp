@@ -94,10 +94,57 @@ void AsioClient::handle_read_line(const boost::system::error_code &err)
 
         // 1. error http_version HTTP/
         // 2. status_code != 200
-        if(status_code != 200) {
-            return;
-        }
+        //if(status_code != 200) {
+        //   return;
+        //}
+
+        boost::asio::async_read_until(socket, responsebuf, "\r\n\r\n",
+                                      boost::bind(&AsioClient::handle_read_header, this, boost::asio::placeholders::error));
+
     } else {
 
+    }
+}
+
+void AsioClient::handle_read_header(const boost::system::error_code &err)
+{
+    std::istream istrm(&responsebuf);
+
+    std::string header;
+
+    while(std::getline(istrm, header) && header != "\r") {
+        // header
+        oss << header << std::endl;
+    }
+
+    boost::asio::streambuf::const_buffers_type bufs = responsebuf.data();
+    std::string str(boost::asio::buffers_begin(bufs),
+                    boost::asio::buffers_begin(bufs) + responsebuf.size());
+
+    oss << str;
+
+    // qDebug() << oss.str().c_str() << endl;
+
+    //
+    boost::asio::async_read(socket, responsebuf,
+                            boost::asio::transfer_at_least(1),
+                            boost::bind(&AsioClient::handle_read_content, this,
+                                        boost::asio::placeholders::error));
+}
+
+void AsioClient::handle_read_content(const boost::system::error_code &err)
+{
+    if(!err) {
+        oss << &responsebuf;
+
+        boost::asio::async_read(socket, responsebuf,
+                                boost::asio::transfer_at_least(1),
+                                boost::bind(&AsioClient::handle_read_content, this,
+                                            boost::asio::placeholders::error));
+    } else if (err == boost::asio::error::eof){
+        // read complete
+        qDebug() << oss.str().c_str() << endl;
+    } else {
+        // error
     }
 }

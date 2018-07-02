@@ -25,11 +25,15 @@ public:
 
     void handle_write(const boost::system::error_code& err);
     void handle_read_line(const boost::system::error_code& err);
+    void handle_read_header(const boost::system::error_code& err);
+    void handle_read_content(const boost::system::error_code& err);
 
 private:
     boost::asio::io_service ioservice;
     std::shared_ptr<boost::asio::io_service::work> work;
     std::thread worker;
+
+    std::ostringstream oss;
 
     std::string server, path;
     boost::asio::ip::tcp::resolver resolver;
