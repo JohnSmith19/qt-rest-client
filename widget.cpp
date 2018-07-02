@@ -1,6 +1,7 @@
 #include "widget.h"
 #include "ui_widget.h"
 #include <QString>
+#include <QRegularExpression>
 
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
@@ -24,6 +25,17 @@ Widget::~Widget()
 
 void Widget::on_getBtn_clicked()
 {
-    //ui->urlEdit->text();
-    client->Get("www.boost.org", "/");
+    QString url = ui->urlEdit->text();
+    //client->Get("www.boost.org", "/");
+
+    // https://gist.github.com/voodooGQ/4057330
+    QRegularExpression re("^(?:([A-Za-z]+):)?(\\/{0,3})([0-9.\\-A-Za-z]+)(?::(\\d+))?(?:\\/([^?#]*))?(?:\\?([^#]*))?(?:#(.*))?$");
+    QRegularExpressionMatch match = re.match(url);
+
+    if(match.hasMatch()) {
+        auto hostName = match.captured(3);
+        auto urlPath = "/" + match.captured(5);
+
+        client->Get(hostName, urlPath);
+    }
 }

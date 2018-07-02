@@ -3,7 +3,8 @@
 
 AsioClient::AsioClient():
     work(new boost::asio::io_service::work(ioservice)),
-    resolver(ioservice)
+    resolver(ioservice),
+    socket(ioservice)
 {
     worker = std::thread([&](){
         ioservice.run();
@@ -40,5 +41,20 @@ void AsioClient::handle_resolve(const boost::system::error_code &err,
        boost::asio::ip::tcp::endpoint ep = *endpoint_iterator;
 
        qDebug() << ep.address().to_string().c_str() << endl;
+
+       socket.async_connect(*endpoint_iterator, boost::bind(&AsioClient::handle_connect, this,
+                                                             boost::asio::placeholders::error(),
+                                                             endpoint_iterator));
+    }
+}
+
+void AsioClient::handle_connect(const boost::system::error_code &err,
+                                boost::asio::ip::tcp::resolver::iterator endpoint_iterator)
+{
+    if(!err) { // success
+        // write
+
+    } else { // fail
+        qDebug() << err.message().c_str() << endl;
     }
 }
