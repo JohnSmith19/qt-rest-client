@@ -2,15 +2,15 @@
 #define ASIOCLIENT_H
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
-
-#include <QObject>
-#include <QString>
 #include <memory>
 #include <thread>
 
+#include <QObject>
+#include <QString>
 
-class AsioClient
+class AsioClient : public QObject
 {
+    Q_OBJECT
 public:
     AsioClient();
     virtual ~AsioClient();
@@ -40,6 +40,10 @@ private:
     boost::asio::ip::tcp::socket socket;
     boost::asio::streambuf requestbuf;
     boost::asio::streambuf responsebuf;
+
+signals:
+    void read_finish(const QString& msg);
+    void read_failed(const QString& msg);
 };
 
 #endif // ASIOCLIENT_H

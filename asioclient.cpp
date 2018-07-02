@@ -114,7 +114,7 @@ void AsioClient::handle_read_header(const boost::system::error_code &err)
 
     while(std::getline(istrm, header) && header != "\r") {
         // header
-        oss << header << std::endl;
+        //oss << header << std::endl;
     }
 
     boost::asio::streambuf::const_buffers_type bufs = responsebuf.data();
@@ -144,7 +144,10 @@ void AsioClient::handle_read_content(const boost::system::error_code &err)
     } else if (err == boost::asio::error::eof){
         // read complete
         qDebug() << oss.str().c_str() << endl;
+
+        emit read_finish(QString::fromStdString(oss.str()));
     } else {
         // error
+        emit read_failed(QString::fromStdString(err.message()));
     }
 }

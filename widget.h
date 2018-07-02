@@ -18,6 +18,7 @@ public:
 
 private slots:
     void on_getBtn_clicked();
+    void on_success(const QString& msg);
 
 private:
     Ui::Widget *ui;

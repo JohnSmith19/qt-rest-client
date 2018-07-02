@@ -15,6 +15,8 @@ Widget::Widget(QWidget *parent) :
     ui->paramTable->setSelectionBehavior(QAbstractItemView::SelectRows);
 
     ui->urlEdit->setText("http://127.0.0.1:5000/");
+
+    connect(client, SIGNAL(read_finish(QString)), this, SLOT(on_success(QString)));
 }
 
 Widget::~Widget()
@@ -38,4 +40,9 @@ void Widget::on_getBtn_clicked()
 
         client->Get(hostName, urlPath);
     }
+}
+
+void Widget::on_success(const QString &msg)
+{
+    ui->responseEdit->setText(msg);
 }
